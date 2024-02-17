@@ -51,6 +51,7 @@
     for (let j = 0; j < 9; j++) {
       const cell = document.createElement('td');
       cell.textContent = initialSudokuState[i][j] !== 0 ? initialSudokuState[i][j] : '';
+      cell.setAttribute("tabindex","0")
       cell.addEventListener('click', () => focusCell(i, j));
       row.appendChild(cell);
     }
