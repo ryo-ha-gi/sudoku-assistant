@@ -1,100 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sudoku</title>
-  <style>
-    #sudoku {
-      border-collapse: collapse;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
 
-    #sudoku td {
-      width: 30px;
-      height: 30px;
-      text-align: center;
-      border: 1px solid black;
-      cursor: pointer;
-    }
+        td {
+            width: 30px;
+            height: 30px;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 16px;
+        }
 
-    #sudoku td:focus {
-      outline: 2px solid blue;
-    }
-  </style>
+        td:focus {
+            outline: 2px solid blue;
+        }
+    </style>
 </head>
 <body>
 
-<table id="sudoku">
-  <!-- 数独の初期状態を表示 -->
-</table>
+<table id="sudoku"></table>
 
 <script>
-  // 数独の初期状態（仮の状態）を設定
-  const initialSudokuState = [
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9]
-  ];
+    // Create Sudoku grid
+    const sudokuTable = document.getElementById('sudoku');
+    const initialGrid = [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9]
+    ];
 
-  // テーブルの要素を取得
-  const sudokuTable = document.getElementById('sudoku');
-
-  // 数独の初期状態をテーブルに追加
-  for (let i = 0; i < 9; i++) {
-    const row = document.createElement('tr');
-    for (let j = 0; j < 9; j++) {
-      const cell = document.createElement('td');
-      cell.textContent = initialSudokuState[i][j] !== 0 ? initialSudokuState[i][j] : '';
-      cell.setAttribute("tabindex","0")
-      cell.addEventListener('click', () => focusCell(i, j));
-      row.appendChild(cell);
+    function createSudokuGrid() {
+        for (let i = 0; i < 9; i++) {
+            const row = document.createElement('tr');
+            for (let j = 0; j < 9; j++) {
+                const cell = document.createElement('td');
+                cell.setAttribute('tabindex', i * 9 + j + 1);
+                cell.addEventListener('keydown', handleKeyDown);
+                if (initialGrid[i][j] !== 0) {
+                    cell.textContent = initialGrid[i][j];
+                    cell.classList.add('initial-cell');
+                    cell.setAttribute('contenteditable', 'false');
+                } else {
+                    createSubGrid(cell);
+                }
+                row.appendChild(cell);
+            }
+            sudokuTable.appendChild(row);
+        }
     }
-    sudokuTable.appendChild(row);
-  }
 
-  // フォーカスされたマスの座標を保持する変数
-  let focusedCell = { row: 0, col: 0 };
-
-  // マスにフォーカスする関数
-  function focusCell(row, col) {
-    focusedCell = { row, col };
-    updateFocus();
-  }
-
-  // フォーカスを更新する関数
-  function updateFocus() {
-    // フォーカスを受けるマスに対してフォーカスを設定
-    sudokuTable.querySelectorAll('td').forEach((cell, index) => {
-      const rowIndex = Math.floor(index / 9);
-      const colIndex = index % 9;
-      if (rowIndex === focusedCell.row && colIndex === focusedCell.col) {
-        cell.focus();
-      } else {
-        cell.blur();
-      }
-    });
-  }
-
-  // キーボードのイベントリスナーを追加
-  document.addEventListener('keydown', handleKeyPress);
-
-  // 数字が押されたときの処理
-  function handleKeyPress(event) {
-    const pressedKey = event.key;
-    const isValidKey = /^\d$/.test(pressedKey);
-
-    if (isValidKey) {
-      // 数字が有効な場合、フォーカスされているマスに数字を表示
-      const cellValue = parseInt(pressedKey);
-      sudokuTable.rows[focusedCell.row].cells[focusedCell.col].textContent = cellValue;
+    function createSubGrid(cell) {
+        const subGrid = document.createElement('table');
+        subGrid.classList.add('subgrid');
+        for (let i = 0; i < 3; i++) {
+            const subRow = document.createElement('tr');
+            for (let j = 0; j < 3; j++) {
+                const subCell = document.createElement('td');
+                subCell.textContent = i * 3 + j + 1;
+                subCell.addEventListener('click', handleSubCellClick);
+                subRow.appendChild(subCell);
+            }
+            subGrid.appendChild(subRow);
+        }
+        cell.appendChild(subGrid);
     }
-  }
+
+    function handleSubCellClick(event) {
+        const value = event.target.textContent;
+        const focusedCell = document.activeElement;
+        focusedCell.textContent = value;
+        focusedCell.focus();
+    }
+
+    function handleKeyDown(event) {
+        const focusedCell = document.activeElement;
+        const currentIndex = parseInt(focusedCell.getAttribute('tabindex')) - 1;
+        let newIndex;
+
+        switch (event.key) {
+            case 'ArrowUp':
+                newIndex = currentIndex - 9;
+                break;
+            case 'ArrowDown':
+                newIndex = currentIndex + 9;
+                break;
+            case 'ArrowLeft':
+                newIndex = currentIndex - 1;
+                break;
+            case 'ArrowRight':
+                newIndex = currentIndex + 1;
+                break;
+            default:
+                return;
+        }
+
+        if (newIndex >= 0 && newIndex < 81) {
+            const newCell = document.querySelector(`[tabindex="${newIndex + 1}"]`);
+            newCell.focus();
+        }
+
+        event.preventDefault();
+    }
+
+    createSudokuGrid();
 </script>
 
 </body>
