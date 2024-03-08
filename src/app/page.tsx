@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import Grid from "./grid"
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -107,6 +107,9 @@ export default function Home() {
             Instantly deploy your Next.js site to a shareable URL with Vercel.
           </p>
         </a>
+      </div>
+      <div>
+        <Grid></Grid>
       </div>
     </main>
   );
