@@ -54,6 +54,7 @@ export default function Grid(){
             {confirmed_nums.map((item)=>{
                 return(
                     <Box 
+                        key={item.id}
                         confirmed_num={item.number}
                         id={item.id}
                         setFocused_box={setFocused_box}
