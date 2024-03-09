@@ -43,9 +43,12 @@ export default function Grid(){
             new_status.splice(val,1,"doubled")
         })
         setBox_status(new_status)
-
+        if(!doubleds?.length&&!confirmed_nums.filter((item)=>item.number===0).length)setTimeout(Congrats,0.5)
     },[confirmed_nums])
 
+    function Congrats(){
+        alert("Congraturations! おめでとう！")
+    }
     function CheckDoubled(confirmed_nums:number[]):number[]|undefined{
         let result:number[]=Array()
         confirmed_nums.map((num,ind,arr)=>{
