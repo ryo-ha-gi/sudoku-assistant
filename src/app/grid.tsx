@@ -1,26 +1,27 @@
 "use client"
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import { Dispatch,SetStateAction } from "react";
 
-function Box({confirmed_num,preliminary_numbers,id,focused_id,setFocused_box}:{confirmed_num:number;preliminary_numbers?:number[];id:number;focused_id:number;setFocused_box:Dispatch<SetStateAction<number>>;}){
+function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_box}:{confirmed_num:number;preliminary_numbers?:number[];id:number;focused_id:number;status:string;setFocused_box:Dispatch<SetStateAction<number>>;}){
     function boxClickHandler(){
         setFocused_box(id)
     }
-    const box_33_x_index = id%3
-    const box_33_y_index = Math.floor(id/9) %3
-    const outer_box_33border_css = (box_33_x_index===0?"border-l-2 ":(box_33_x_index===2?"border-r-2 ":" ")) + (box_33_y_index===0?"border-t-2 ":(box_33_y_index===2?"border-b-2 ":" "))
+    const block_33_x_index = id%3
+    const block_33_y_index = Math.floor(id/9) %3
+    const outer_box_33block_border_css = (block_33_x_index===0?"border-l-2 ":(block_33_x_index===2?"border-r-2 ":" ")) + (block_33_y_index===0?"border-t-2 ":(block_33_y_index===2?"border-b-2 ":" "))
     const outer_box_neutral_css = "hover:bg-[rgba(255,255,255,0.6)] border-slate-400 "
     const inner_box_not_focused_css = " border-gray-300"
     const inner_box_neutral_css = " border-2 border-solid [aspect-ratio:1;] w-full h-full flex items-center justify-center relative "
     const inner_box_focused_css = " border-rose-500 bg-yellow-300"
+    const inner_box_doubled_css = status==="doubled"?" text-red-700 ":" "
     const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:w-full before:h-full before:z-[-1] "
     const inner_same_col_css = (focused_id===id?" ":(focused_id%9===id%9?(inner_same_col_or_row + " before:border-x-2 "):" "))
     const inner_same_row_css = (focused_id===id?" ":(Math.floor(focused_id/9)===Math.floor(id/9)?(inner_same_col_or_row + " before:border-y-2 "):" "))
 
-    const inner_css = inner_box_neutral_css + inner_same_col_css + inner_same_row_css + (id===focused_id?inner_box_focused_css:inner_box_not_focused_css)
+    const inner_css = inner_box_neutral_css + inner_same_col_css + inner_same_row_css + (id===focused_id?inner_box_focused_css:inner_box_not_focused_css) + inner_box_doubled_css
 
     return(
-        <div onClick={boxClickHandler} className={outer_box_neutral_css+outer_box_33border_css}>
+        <div onClick={boxClickHandler} className={outer_box_neutral_css+outer_box_33block_border_css}>
             <div className={inner_css}>
                 {confirmed_num?confirmed_num:preliminary_numbers}
             </div>
@@ -28,9 +29,44 @@ function Box({confirmed_num,preliminary_numbers,id,focused_id,setFocused_box}:{c
     )
 }
 
+
 export default function Grid(){
+
     const [confirmed_nums,setConfirmed_nums] = useState(Array.from(Array(9*9).keys()).map((n)=>{return{number:0,id:n}}))
+    const [box_status,setBox_status] = useState(Array(9*9).map(()=>""))
     const [focused_box,setFocused_box] = useState(-1)
+
+    useEffect(()=>{
+        const doubleds = CheckDoubled(confirmed_nums.map((item)=>item.number))
+        let new_status = Array(9*9).map(()=>"")
+        doubleds?.map((val)=>{
+            new_status.splice(val,1,"doubled")
+        })
+        setBox_status(new_status)
+
+    },[confirmed_nums])
+
+    function CheckDoubled(confirmed_nums:number[]):number[]|undefined{
+        let result:number[]=Array()
+        confirmed_nums.map((num,ind,arr)=>{
+            if(num===0)return
+
+            //row
+            const row = arr.slice(Math.floor(ind/9)*9,(Math.floor(ind/9)+1)*9)
+            if(row.filter((val)=>val===num).length>1)return result.push(ind)
+
+            //col
+            const col = arr.filter((val,i)=> i%9===ind%9 )
+            if(col.filter((val)=>val===num).length>1)return result.push(ind)
+
+            //block
+            const block = arr.filter((val,i)=>{
+                return Math.floor(i/27)==Math.floor(ind/27)&&Math.floor((i%9)/3)===Math.floor((ind%9)/3)
+            })
+            if(block.filter((val)=>val===num).length>1)return result.push(ind)
+        })
+        return result
+    }
 
     const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const pushed_key = e.code;
@@ -76,6 +112,7 @@ export default function Grid(){
                         confirmed_num={item.number}
                         id={item.id}
                         focused_id={focused_box}
+                        status={box_status[item.id]}
                         setFocused_box={setFocused_box}
                     />
                 )
