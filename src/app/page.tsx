@@ -108,7 +108,7 @@ export default function Home() {
           </p>
         </a>
       </div>
-      <div>
+      <div className="w-full h-full my-20 min-w-[400px] max-w-[80vh] flex justify-center">
         <Grid></Grid>
       </div>
     </main>
