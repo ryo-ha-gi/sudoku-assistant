@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Grid from "@/components/sudoku-grid/grid"
-import { ResetButton } from "@/components/sudoku-grid/fillGrid";
+import { ResetButton } from "@/components/sudoku-grid/controls/fillGrid";
 
 export default function Home() {
   return (
