@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Grid from "@/components/gridcontext/grid/grid"
+import Grid from "@/components/sudoku-grid/grid"
+import { ResetButton } from "@/components/sudoku-grid/fillGrid";
 
 export default function Home() {
   return (
@@ -110,6 +111,7 @@ export default function Home() {
         </a>
       </div>
       <div className="w-full h-full my-20 min-w-[400px] max-w-[80vh] flex justify-center">
+        <ResetButton></ResetButton>
         <Grid></Grid>
       </div>
     </main>
