@@ -1,7 +1,5 @@
 "use client"
 import { useState,useEffect } from "react"
-import { Dispatch,SetStateAction } from "react";
-import { useSearchParams,useRouter } from "next/navigation";
 import { useContext } from "react";
 import { BoardContext } from "@/contexts/gridContext";
 
@@ -41,8 +39,6 @@ export default function Grid(){
     const confirmed_nums = board.grid_state.map((item)=>item.number)
     const box_status = board.grid_state.map((item)=>item.state)
     const focused_box = board.focused_id
-    // const [box_status,setBox_status] = useState(Array(9*9).map(()=>""))
-    // const [focused_box,setFocused_box] = useState(-1)
 
     const setConfirmed_nums = (index:number,num:number) => {
         SetNum(index,num)
