@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Grid from "@/components/sudoku-grid/grid"
 import { ResetButton } from "@/components/sudoku-grid/controls/fillGrid";
-
+import { BoardProvider } from "@/contexts/gridContext";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -110,10 +110,16 @@ export default function Home() {
           </p>
         </a>
       </div>
-      <div className="w-full h-full my-20 min-w-[400px] max-w-[80vh] flex justify-center">
-        <ResetButton></ResetButton>
-        <Grid></Grid>
-      </div>
+      
+        <BoardProvider>
+          <>
+            <ResetButton/>
+            <div className="w-full h-full my-20 min-w-[400px] max-w-[80vh] flex justify-center">
+              <Grid></Grid>
+            </div>
+          </>
+        </BoardProvider>
+      
     </main>
   );
 }

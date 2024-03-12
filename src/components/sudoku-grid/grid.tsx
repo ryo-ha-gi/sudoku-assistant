@@ -2,8 +2,10 @@
 import { useState,useEffect } from "react"
 import { Dispatch,SetStateAction } from "react";
 import { useSearchParams,useRouter } from "next/navigation";
+import { useContext } from "react";
+import { BoardContext } from "@/contexts/gridContext";
 
-function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_box}:{confirmed_num:number;preliminary_numbers?:number[];id:number;focused_id:number;status:string;setFocused_box:Dispatch<SetStateAction<number>>;}){
+function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_box}:{confirmed_num:number;preliminary_numbers?:number[];id:number;focused_id:number;status:string;setFocused_box: (index: number) => void;}){
     function boxClickHandler(){
         setFocused_box(id)
     }
@@ -33,32 +35,33 @@ function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_
 
 export default function Grid(){
 
-    const searchParams = useSearchParams()
-    const param_state = searchParams.get("state")
-    let confirmed_nums = (param_state?param_state:"" + Array(9*9+1).join('0')).slice(0,9*9)
-    const router = useRouter()
+    const {board,SetNum,SetStatus,SetFocusedId} = useContext(BoardContext)
+    const [isUpdated,setUpdated] = useState(0)
     
+    const confirmed_nums = board.grid_state.map((item)=>item.number)
+    const box_status = board.grid_state.map((item)=>item.state)
+    const focused_box = board.focused_id
+    // const [box_status,setBox_status] = useState(Array(9*9).map(()=>""))
+    // const [focused_box,setFocused_box] = useState(-1)
 
-    // const [confirmed_nums,setConfirmed_nums] = useState(Array.from(Array(9*9).keys()).map((n)=>{return{number:0,id:n}}))
-    const [box_status,setBox_status] = useState(Array(9*9).map(()=>""))
-    const [focused_box,setFocused_box] = useState(-1)
-
-    const setConfirmed_nums = (nums:string,index:number,num:string) => {
-        const regex = new RegExp(`(?<=^.{${index}}).`)
-        confirmed_nums = nums.replace(regex,num)
-        router.prefetch("?state="+confirmed_nums)
-        router.push("?state="+confirmed_nums,{scroll:false})
+    const setConfirmed_nums = (index:number,num:number) => {
+        SetNum(index,num)
     }
 
     useEffect(()=>{
-        const doubleds = CheckDoubled(confirmed_nums.split("").map((char)=>Number(char)))
-        let new_status = Array(9*9).map(()=>"")
+        checkGrid()
+        setUpdated(0)
+    },[isUpdated])
+
+    const checkGrid = () => {
+        const doubleds = CheckDoubled(confirmed_nums)
+        let new_status = [...Array(9*9)].map(()=>"")
         doubleds?.map((val)=>{
             new_status.splice(val,1,"doubled")
         })
-        setBox_status(new_status)
-        if(!doubleds?.length&&!confirmed_nums.split("").filter((char)=>Number(char)===0).length)setTimeout(Congrats,0.5)
-    },[confirmed_nums])
+        SetStatus(new_status)
+        if(!doubleds?.length&&!confirmed_nums.filter((char)=>Number(char)===0).length)setTimeout(Congrats,0.5)
+    }
 
     function Congrats(){
         alert("Congraturations! おめでとう！")
@@ -87,23 +90,23 @@ export default function Grid(){
 
     const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const pushed_key = e.code;
-        if(focused_box===-1)setFocused_box(0)
+        if(focused_box===-1)SetFocusedId(0)
 
         if(!isNaN(Number(pushed_key.slice(-1)))){
-            setConfirmed_nums(confirmed_nums,focused_box,pushed_key.slice(-1))
+            setConfirmed_nums(focused_box,Number(pushed_key.slice(-1)))
         }else if( pushed_key.startsWith("Arrow")){
             switch (pushed_key.slice(-2)){
                 case "Up":
-                    if(focused_box>=9)setFocused_box(focused_box-9)
+                    if(focused_box>=9)SetFocusedId(focused_box-9)
                     break;
                 case "ht":
-                    if(focused_box%9<8)setFocused_box(focused_box+1)
+                    if(focused_box%9<8)SetFocusedId(focused_box+1)
                     break;
                 case "wn":
-                    if(focused_box<=72)setFocused_box(focused_box+9)
+                    if(focused_box<=72)SetFocusedId(focused_box+9)
                     break;
                 case "ft":
-                    if(focused_box%9>0)setFocused_box(focused_box-1)
+                    if(focused_box%9>0)SetFocusedId(focused_box-1)
                 default:
                     console.log(pushed_key.slice(-2))
                     break;
@@ -113,24 +116,25 @@ export default function Grid(){
             switch (pushed_key){
                 case "Backspace":
                 case "Delete":
-                    setConfirmed_nums(confirmed_nums,focused_box,'0')
+                    setConfirmed_nums(focused_box,0)
                 default:
                     break;
             }
         }
+        setUpdated(isUpdated+1)
     }
     
     return (
         <div tabIndex={0} onKeyDown={keyDownHandler} className="grid grid-cols-9 gap-0 w-[90%] [aspect-ratio:1;]">
-            {confirmed_nums.split("").map((char,ind)=>{
+            {confirmed_nums.map((val,ind)=>{
                 return(
                     <Box 
                         key={ind}
-                        confirmed_num={Number(char)}
+                        confirmed_num={Number(val)}
                         id={ind}
                         focused_id={focused_box}
                         status={box_status[ind]}
-                        setFocused_box={setFocused_box}
+                        setFocused_box={SetFocusedId}
                     />
                 )
             })}
