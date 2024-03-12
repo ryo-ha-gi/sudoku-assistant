@@ -14,11 +14,11 @@ type Grid = {
 type Board ={ 
     board: Grid;
     SetGrid: (grid:Grid) => void;
-    SetNum:(index:number,num:number)=>void;
+    SetNum:(num:number)=>void;
     SetStatus:(status:string[])=>void;
     SetFocusedId:(index:number)=>void;
 }
-const default_conttext_value:Board = {board:default_grid, SetGrid:(grid)=>{}, SetNum:(ind,num)=>{},SetStatus:(stateus)=>{},SetFocusedId:(index)=>{}}
+const default_conttext_value:Board = {board:default_grid, SetGrid:(grid)=>{}, SetNum:(num)=>{},SetStatus:(stateus)=>{},SetFocusedId:(index)=>{}}
 
 
 export const BoardContext = createContext(default_conttext_value);
@@ -29,9 +29,9 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
   const SetGrid = (grid:Grid) => {
     setBoard(grid)
   }
-  const SetNum = (index:number,number:number) => {
+  const SetNum = (number:number) => {
     const newBoard = {...board}
-    newBoard.grid_state[index].number=number;
+    newBoard.grid_state[board.focused_id].number=number;
     setBoard(newBoard)
   }
   const SetStatus = (status:string[]) => {

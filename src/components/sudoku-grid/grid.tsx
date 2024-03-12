@@ -40,8 +40,8 @@ export default function Grid(){
     const box_status = board.grid_state.map((item)=>item.state)
     const focused_box = board.focused_id
 
-    const setConfirmed_nums = (index:number,num:number) => {
-        SetNum(index,num)
+    const setConfirmed_nums = (num:number) => {
+        SetNum(num)
     }
 
     useEffect(()=>{
@@ -89,7 +89,7 @@ export default function Grid(){
         if(focused_box===-1)SetFocusedId(0)
 
         if(!isNaN(Number(pushed_key.slice(-1)))){
-            setConfirmed_nums(focused_box,Number(pushed_key.slice(-1)))
+            setConfirmed_nums(Number(pushed_key.slice(-1)))
         }else if( pushed_key.startsWith("Arrow")){
             switch (pushed_key.slice(-2)){
                 case "Up":
@@ -112,7 +112,7 @@ export default function Grid(){
             switch (pushed_key){
                 case "Backspace":
                 case "Delete":
-                    setConfirmed_nums(focused_box,0)
+                    setConfirmed_nums(0)
                 default:
                     break;
             }
