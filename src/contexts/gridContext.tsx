@@ -31,7 +31,6 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
   const SetGrid = (grid:Grid) => {
     const newBoard:Grid = JSON.parse(JSON.stringify(grid))
     setBoard(AddState(newBoard))
-    console.log("gritSet",grid)
   }
   const SetNum = (number:number) => {
     if(number<0)return;

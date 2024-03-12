@@ -5,6 +5,6 @@ import { useContext } from "react"
 export const NumberButton = ({number}:{number:number}) => {
     const {SetNum} = useContext(BoardContext)
     return (
-        <div onClick={()=>SetNum(number)}>{number}</div>
+        <button onClick={()=>SetNum(number)}>{number}</button>
     )
 }

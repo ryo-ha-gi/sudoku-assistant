@@ -7,11 +7,11 @@ const CLEAR_BOARD = "12345678945678912378912345623456789156789123489123456734567
 export const ResetButton = () => {
     const {SetGrid} = useContext(BoardContext)
     return (
-        <div onClick={()=>SetGrid(default_grid)}>RESET</div>
+        <button onClick={()=>SetGrid(default_grid)}>RESET</button>
     )
 }
 export const ClearButton = () => {
     return (
-        <div>CLEAR</div>
+        <button>CLEAR</button>
     )
 }
