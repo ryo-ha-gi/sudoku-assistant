@@ -1,3 +1,4 @@
+"use client"
 import { default_grid } from "@/contexts/gridContext"
 import { BoardContext } from "@/contexts/gridContext"
 import { useContext } from "react"
