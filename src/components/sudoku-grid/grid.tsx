@@ -33,9 +33,9 @@ function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_
 
 export default function Grid(){
 
-    const {board,SetNum,SetStatus,SetFocusedId} = useContext(BoardContext)
-    const [isUpdated,setUpdated] = useState(0)
-    
+    const {board,SetNum,SetFocusedId} = useContext(BoardContext)
+    const [isCelebrated,setIsCelebrated] = useState(0)
+
     const confirmed_nums = board.grid_state.map((item)=>item.number)
     const box_status = board.grid_state.map((item)=>item.state)
     const focused_box = board.focused_id
@@ -43,45 +43,10 @@ export default function Grid(){
     const setConfirmed_nums = (num:number) => {
         SetNum(num)
     }
-
-    useEffect(()=>{
-        checkGrid()
-        setUpdated(0)
-    },[isUpdated])
-
-    const checkGrid = () => {
-        const doubleds = CheckDoubled(confirmed_nums)
-        let new_status = [...Array(9*9)].map(()=>"")
-        doubleds?.map((val)=>{
-            new_status.splice(val,1,"doubled")
-        })
-        SetStatus(new_status)
-        if(!doubleds?.length&&!confirmed_nums.filter((char)=>Number(char)===0).length)setTimeout(Congrats,0.5)
-    }
-
-    function Congrats(){
-        alert("Congraturations! おめでとう！")
-    }
-    function CheckDoubled(confirmed_nums:number[]):number[]|undefined{
-        let result:number[]=Array()
-        confirmed_nums.map((num,ind,arr)=>{
-            if(num===0)return
-
-            //row
-            const row = arr.slice(Math.floor(ind/9)*9,(Math.floor(ind/9)+1)*9)
-            if(row.filter((val)=>val===num).length>1)return result.push(ind)
-
-            //col
-            const col = arr.filter((val,i)=> i%9===ind%9 )
-            if(col.filter((val)=>val===num).length>1)return result.push(ind)
-
-            //block
-            const block = arr.filter((val,i)=>{
-                return Math.floor(i/27)==Math.floor(ind/27)&&Math.floor((i%9)/3)===Math.floor((ind%9)/3)
-            })
-            if(block.filter((val)=>val===num).length>1)return result.push(ind)
-        })
-        return result
+    if(board.isCompleted==0&&isCelebrated)setIsCelebrated(0)
+    if(board.isCompleted&&!isCelebrated){
+        setTimeout(()=>{alert("Congraturations! おめでとう")},0.5)
+        setIsCelebrated(1)
     }
 
     const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -103,6 +68,7 @@ export default function Grid(){
                     break;
                 case "ft":
                     if(focused_box%9>0)SetFocusedId(focused_box-1)
+                    break;
                 default:
                     console.log(pushed_key.slice(-2))
                     break;
@@ -117,7 +83,6 @@ export default function Grid(){
                     break;
             }
         }
-        setUpdated(isUpdated+1)
     }
     
     return (
