@@ -1,15 +1,16 @@
-import Link from "next/link"
-
+import { default_grid } from "@/contexts/gridContext"
+import { BoardContext } from "@/contexts/gridContext"
+import { useContext } from "react"
 const CLEAR_BOARD = "123456789456789123789123456234567891567891234891234567345678912678912345912345678"
-const RESET_BOARD = "000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 
 export const ResetButton = () => {
+    const {SetGrid} = useContext(BoardContext)
     return (
-        <Link href={"?state="+RESET_BOARD} scroll={false}>RESET</Link>
+        <div onClick={()=>SetGrid(default_grid)}>RESET</div>
     )
 }
 export const ClearButton = () => {
     return (
-        <Link href={"?state="+CLEAR_BOARD} scroll={false}>RESET</Link>
+        <div>CLEAR</div>
     )
 }
