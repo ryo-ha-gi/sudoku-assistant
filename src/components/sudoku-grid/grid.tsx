@@ -76,7 +76,7 @@ export default function Grid(){
                     if(focused_box%9<8)SetFocusedId(focused_box+1)
                     break;
                 case "wn":
-                    if(focused_box<=72)SetFocusedId(focused_box+9)
+                    if(focused_box<72)SetFocusedId(focused_box+9)
                     break;
                 case "ft":
                     if(focused_box%9>0)SetFocusedId(focused_box-1)
