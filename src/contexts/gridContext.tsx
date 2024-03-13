@@ -50,11 +50,22 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
   }
 
   const ProcessingState = (grid:Grid) => {
-    return AddState(grid)
+    return AddPossibleNumbers(AddState(grid))
   }
 
   const AddPossibleNumbers = (grid:Grid) => {
     const newBoard = structuredClone(grid)
+    const confirmed_nums = newBoard.grid_state.map((item)=>item.number)
+    newBoard.grid_state.map((item,ind)=>{
+      if(item.number===0){
+        item.possible_numbers = [1,2,3,4,5,6,7,8,9].filter((num)=>{
+          return !CheckDoubled(confirmed_nums.map((val,i)=>i===ind?num:val))?.length
+        })
+      }else{
+        item.possible_numbers = [item.number]
+      }
+    })
+    return newBoard
   }
 
   const AddState = (grid:Grid) => {

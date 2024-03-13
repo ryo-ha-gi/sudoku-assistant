@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useContext } from "react";
 import { BoardContext } from "@/contexts/gridContext";
 
-function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_box}:{confirmed_num:number;preliminary_numbers?:number[];id:number;focused_id:number;status:string;setFocused_box: (index: number) => void;}){
+function Box({confirmed_num,possible_numbers,id,focused_id,status,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;status:string;setFocused_box: (index: number) => void;}){
     function boxClickHandler(){
         setFocused_box(id)
     }
@@ -21,10 +21,22 @@ function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_
 
     const inner_css = inner_box_neutral_css + inner_same_col_css + inner_same_row_css + (id===focused_id?inner_box_focused_css:inner_box_not_focused_css) + inner_box_doubled_css
 
+    const inner_grid = ({numbers}:{numbers:number[]}) => {
+        return (
+            <div className="grid grid-cols-3 w-full">{
+                [1,2,3,4,5,6,7,8,9].map((val)=>{
+                    return <div className="text-gray-500 flex justify-center">{numbers.includes(val)?val:""}</div>
+                })
+            }</div>
+            
+        )
+
+    }
+
     return(
         <div onClick={boxClickHandler} className={outer_box_neutral_css+outer_box_33block_border_css}>
             <div className={inner_css}>
-                {confirmed_num?confirmed_num:preliminary_numbers}
+                {confirmed_num?confirmed_num:inner_grid({numbers:possible_numbers?possible_numbers:[]})}
             </div>
         </div>
     )
@@ -95,6 +107,7 @@ export default function Grid(){
                         id={ind}
                         focused_id={focused_box}
                         status={box_status[ind]}
+                        possible_numbers={board.grid_state[ind].possible_numbers}
                         setFocused_box={SetFocusedId}
                     />
                 )
