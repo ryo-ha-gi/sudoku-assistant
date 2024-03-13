@@ -33,7 +33,7 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
     setBoard(AddState(newBoard))
   }
   const SetNum = (number:number) => {
-    if(number<0)return;
+    if(board.focused_id<0)return;
     const newBoard:Grid = JSON.parse(JSON.stringify(board))
     newBoard.grid_state[board.focused_id].number=number;
     setBoard(AddState(newBoard))
