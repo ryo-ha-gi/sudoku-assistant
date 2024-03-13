@@ -14,7 +14,7 @@ export const ResetButton = () => {
 export const ClearButton = () => {
     const {SetGrid} = useContext(BoardContext)
     const newGrid:Grid = JSON.parse(JSON.stringify(default_grid))
-    newGrid.grid_state = CLEAR_BOARD.split("").map((num,index)=>{return{number:Number(num),id:index,state:""}})
+    CLEAR_BOARD.split("").map((num,index)=>newGrid.grid_state[index].number=Number(num))
     return (
         <Button onClick={()=>SetGrid(newGrid)}>CLEAR</Button>
     )
