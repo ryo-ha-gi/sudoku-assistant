@@ -25,7 +25,7 @@ function Box({confirmed_num,possible_numbers,id,focused_id,status,setFocused_box
         return (
             <div className="grid grid-cols-3 w-full">{
                 [1,2,3,4,5,6,7,8,9].map((val,ind)=>{
-                    return <div key={ind} className="text-gray-500 flex justify-center">{numbers.includes(val)?val:""}</div>
+                    return <div key={ind} className="text-gray-500 flex justify-center [aspect-ratio:1]">{numbers.includes(val)?val:""}</div>
                 })
             }</div>
             
