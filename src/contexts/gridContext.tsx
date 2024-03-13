@@ -2,13 +2,13 @@
 import React, { createContext, useState } from 'react';
 
 export const default_grid:Grid = {
-    grid_state:[...Array(9*9)].map((v,ind)=>{return{number:0,id:ind,state:""}}),
+    grid_state:[...Array(9*9)].map((v,ind)=>{return{number:0,id:ind,state:"",possible_numbers:[0]}}),
     focused_id:-1,
     isCompleted:0
 }
 
 export type Grid = {
-    grid_state: { number:number; id: number; state: string; }[];
+    grid_state: { number:number; id: number; state: string; possible_numbers:number[];}[];
     focused_id: number;
     isCompleted:number;
 }
@@ -29,28 +29,36 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
   const [board, setBoard] = useState(default_grid);
 
   const SetGrid = (grid:Grid) => {
-    const newBoard:Grid = JSON.parse(JSON.stringify(grid))
-    setBoard(AddState(newBoard))
+    const newBoard:Grid = structuredClone(grid)
+    setBoard(ProcessingState(newBoard))
   }
   const SetNum = (number:number) => {
     if(board.focused_id<0)return;
-    const newBoard:Grid = JSON.parse(JSON.stringify(board))
+    const newBoard:Grid = structuredClone(board)
     newBoard.grid_state[board.focused_id].number=number;
-    setBoard(AddState(newBoard))
+    setBoard(ProcessingState(newBoard))
   }
   const SetStatus = (status:string[]) => {
-    const newBoard:Grid = JSON.parse(JSON.stringify(board))
+    const newBoard:Grid = structuredClone(board)
     status.map((stat,index)=>newBoard.grid_state[index].state=stat)
     setBoard(newBoard)
   }
   const SetFocusedId = (index:number) => {
-    const newBoard:Grid = JSON.parse(JSON.stringify(board))
+    const newBoard:Grid = structuredClone(board)
     newBoard.focused_id = index
-    setBoard(AddState(newBoard))
+    setBoard(ProcessingState(newBoard))
+  }
+
+  const ProcessingState = (grid:Grid) => {
+    return AddState(grid)
+  }
+
+  const AddPossibleNumbers = (grid:Grid) => {
+    const newBoard = structuredClone(grid)
   }
 
   const AddState = (grid:Grid) => {
-    const newBoard:Grid = JSON.parse(JSON.stringify(grid))
+    const newBoard:Grid = structuredClone(grid)
     const doubleds = CheckDoubled(newBoard.grid_state.map((item)=>item.number))
     newBoard.grid_state.map((item)=>{
       if(doubleds?.includes(item.id))newBoard.grid_state[item.id].state="doubled"
