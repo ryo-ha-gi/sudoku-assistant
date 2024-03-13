@@ -7,7 +7,7 @@ export const default_grid:Grid = {
     isCompleted:0
 }
 
-type Grid = {
+export type Grid = {
     grid_state: { number:number; id: number; state: string; }[];
     focused_id: number;
     isCompleted:number;

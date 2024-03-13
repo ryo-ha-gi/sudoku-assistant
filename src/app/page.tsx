@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Grid from "@/components/sudoku-grid/grid"
-import { ResetButton } from "@/components/sudoku-grid/controls/fillGrid";
+import { ClearButton, ResetButton } from "@/components/sudoku-grid/controls/fillGrid";
 import { BoardProvider } from "@/contexts/gridContext";
 import { NumberButton } from "@/components/sudoku-grid/controls/numPad";
 
@@ -115,7 +115,7 @@ export default function Home() {
       
         <BoardProvider>
           <>
-            <div>
+            <div className="grid grid-cols-3 gap-4">
               <NumberButton number={1}/>
               <NumberButton number={2}/>
               <NumberButton number={3}/>
@@ -128,6 +128,7 @@ export default function Home() {
               <NumberButton number={0}/>
             </div>
             <ResetButton/>
+            <ClearButton/>
             <div className="w-full h-full my-20 min-w-[400px] max-w-[80vh] flex justify-center">
               <Grid></Grid>
             </div>

@@ -1,10 +1,13 @@
 "use client"
 import { BoardContext } from "@/contexts/gridContext"
 import { useContext } from "react"
+import Button from "@/components/Button"
 
 export const NumberButton = ({number}:{number:number}) => {
     const {SetNum} = useContext(BoardContext)
     return (
-        <button onClick={()=>SetNum(number)}>{number}</button>
+        <Button onClick={()=>SetNum(number)}>
+            {number}
+        </Button>
     )
 }
