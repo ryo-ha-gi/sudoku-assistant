@@ -15,7 +15,7 @@ function Box({confirmed_num,preliminary_numbers,id,focused_id,status,setFocused_
     const inner_box_neutral_css = " border-2 border-solid [aspect-ratio:1;] w-full h-full flex items-center justify-center relative "
     const inner_box_focused_css = " border-rose-500 bg-yellow-300"
     const inner_box_doubled_css = status==="doubled"?" text-red-700 ":" "
-    const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:bg-opacity-0.8 before:w-full before:h-full before:z-[-1] "
+    const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:dark:bg-slate-400 before:bg-opacity-0.2 before:w-full before:h-full before:z-[-1] "
     const inner_same_col_css = (focused_id===id?" ":(focused_id%9===id%9?(inner_same_col_or_row + " before:border-x-2 "):" "))
     const inner_same_row_css = (focused_id===id?" ":(Math.floor(focused_id/9)===Math.floor(id/9)?(inner_same_col_or_row + " before:border-y-2 "):" "))
 
