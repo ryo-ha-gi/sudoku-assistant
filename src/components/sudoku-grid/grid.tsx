@@ -12,7 +12,7 @@ function Box({confirmed_num,possible_numbers,id,focused_id,status,setFocused_box
     const outer_box_33block_border_css = (block_33_x_index===0?"border-l-2 ":(block_33_x_index===2?"border-r-2 ":" ")) + (block_33_y_index===0?"border-t-2 ":(block_33_y_index===2?"border-b-2 ":" "))
     const outer_box_neutral_css = "hover:bg-white bg-opacity-0.9 border-slate-400 "
     const inner_box_not_focused_css = " border-gray-300"
-    const inner_box_neutral_css = " border-2 border-solid [aspect-ratio:1;] w-full h-full flex items-center justify-center relative "
+    const inner_box_neutral_css = " border-2 border-solid [aspect-ratio:1;] w-full h-full text-4xl font-bold flex items-center justify-center relative "
     const inner_box_focused_css = " border-rose-500 bg-yellow-300"
     const inner_box_doubled_css = status==="doubled"?" text-red-700 ":" "
     const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:dark:bg-slate-400 before:bg-opacity-0.2 before:w-full before:h-full before:z-[-1] "
@@ -25,7 +25,7 @@ function Box({confirmed_num,possible_numbers,id,focused_id,status,setFocused_box
         return (
             <div className="grid grid-cols-3 w-full">{
                 [1,2,3,4,5,6,7,8,9].map((val,ind)=>{
-                    return <div key={ind} className="text-gray-500 flex justify-center [aspect-ratio:1]">{numbers.includes(val)?val:""}</div>
+                    return <div key={ind} className="text-gray-500 text-sm font-normal flex justify-center [aspect-ratio:1]">{numbers.includes(val)?val:""}</div>
                 })
             }</div>
             
