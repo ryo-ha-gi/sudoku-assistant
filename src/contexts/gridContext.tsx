@@ -36,7 +36,7 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
     setBoard(ProcessingState(newBoard))
   }
   const SetNum = (number:number) => {
-    if(board.focused_id<0)return;
+    if(board.focused_id<0||board.isLocked[board.focused_id])return;
     const newBoard:Grid = structuredClone(board)
     newBoard.grid_state[board.focused_id].number=number;
     setBoard(ProcessingState(newBoard))

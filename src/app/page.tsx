@@ -3,6 +3,7 @@ import Grid from "@/components/sudoku-grid/grid"
 import { ClearButton, ResetButton } from "@/components/sudoku-grid/controls/fillGrid";
 import { BoardProvider } from "@/contexts/gridContext";
 import { NumPad } from "@/components/sudoku-grid/controls/numPad";
+import { LockButton, UnlockButton } from "@/components/sudoku-grid/controls/Lock";
 
 export default function Home() {
   return (
@@ -118,6 +119,8 @@ export default function Home() {
             <NumPad/>
             <ResetButton/>
             <ClearButton/>
+            <LockButton/>
+            <UnlockButton/>
             <div className="w-full h-full my-20 min-w-[400px] max-w-[80vh] flex justify-center">
               <Grid></Grid>
             </div>

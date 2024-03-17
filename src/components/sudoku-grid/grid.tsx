@@ -3,20 +3,21 @@ import { useState } from "react"
 import { useContext } from "react";
 import { BoardContext } from "@/contexts/gridContext";
 
-function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;focused_num:number;status:string;setFocused_box: (index: number) => void;}){
+function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,isLocked,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;focused_num:number;status:string;isLocked:boolean;setFocused_box: (index: number) => void;}){
     function boxClickHandler(){
         setFocused_box(id)
     }
     const block_33_x_index = id%3
     const block_33_y_index = Math.floor(id/9) %3
     const outer_box_33block_border_css = (block_33_x_index===0?"border-l-2 ":(block_33_x_index===2?"border-r-2 ":" ")) + (block_33_y_index===0?"border-t-2 ":(block_33_y_index===2?"border-b-2 ":" "))
-    const outer_box_neutral_css = "hover:bg-white bg-opacity-0.9 border-slate-400 "
+    const outer_box_neutral_css = "hover:bg-white bg-opacity-90 border-slate-400 "
+    const outer_locked_css = " hover:bg-slate-400 bg-slate-600 bg-opacity-80 border-slate-400 "
     const inner_box_not_focused_css = " border-gray-300"
     const inner_box_neutral_css = " border-2 border-solid [aspect-ratio:1;] w-full h-full text-4xl font-bold flex items-center justify-center relative "
-    const inner_box_focused_css = " border-rose-500 bg-yellow-300"
+    const inner_box_focused_css = " border-rose-500 bg-yellow-100 bg-opacity-100 z-2 "
     const inner_box_doubled_css = status==="doubled"?" text-red-700 ":" "
-    const inner_same_num_css = " before:content-[''] before:absolute before:bg-yellow-200 before:dark:bg-yellow-400 before:bg-opacity-0.2 before:w-full before:h-full before:z-[-1] "
-    const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:dark:bg-slate-400 before:bg-opacity-0.2 before:w-full before:h-full before:z-[-1] "
+    const inner_same_num_css = " before:content-[''] before:absolute before:bg-yellow-200 before:dark:bg-yellow-400 before:bg-opacity-20 before:w-full before:h-full before:z-[-1] "
+    const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:dark:bg-slate-400 before:bg-opacity-20 before:w-full before:h-full before:z-[-1] "
     const inner_same_col_css = (focused_id===id?" ":(focused_id%9===id%9?(inner_same_col_or_row + " before:border-x-2 "):" "))
     const inner_same_row_css = (focused_id===id?" ":(Math.floor(focused_id/9)===Math.floor(id/9)?(inner_same_col_or_row + " before:border-y-2 "):" "))
 
@@ -35,7 +36,7 @@ function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,se
     }
 
     return(
-        <div onClick={boxClickHandler} className={outer_box_neutral_css+outer_box_33block_border_css}>
+        <div onClick={boxClickHandler} className={isLocked?outer_locked_css: outer_box_neutral_css+outer_box_33block_border_css}>
             <div className={inner_css}>
                 {confirmed_num?confirmed_num:inner_grid({numbers:possible_numbers?possible_numbers:[]})}
             </div>
@@ -109,6 +110,7 @@ export default function Grid(){
                         focused_id={focused_box}
                         focused_num={focused_box!==-1?board.grid_state[focused_box].number:-1}
                         status={box_status[ind]}
+                        isLocked={board.isLocked[ind]}
                         possible_numbers={board.grid_state[ind].possible_numbers}
                         setFocused_box={SetFocusedId}
                     />
