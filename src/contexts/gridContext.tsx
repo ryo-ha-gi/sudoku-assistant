@@ -4,13 +4,15 @@ import React, { createContext, useState } from 'react';
 export const default_grid:Grid = {
     grid_state:[...Array(9*9)].map((v,ind)=>{return{number:0,id:ind,state:"",possible_numbers:[0]}}),
     focused_id:-1,
-    isCompleted:0
+    isCompleted:false,
+    isLocked:[...Array(9*9)].map((v,ind)=>{return false})
 }
 
 export type Grid = {
     grid_state: { number:number; id: number; state: string; possible_numbers:number[];}[];
     focused_id: number;
-    isCompleted:number;
+    isCompleted:boolean;
+    isLocked:boolean[];
 }
 
 type Board ={ 
@@ -19,8 +21,9 @@ type Board ={
     SetNum:(num:number)=>void;
     SetStatus:(status:string[])=>void;
     SetFocusedId:(index:number)=>void;
+    SetLock:(locked:boolean[])=>void;
 }
-const default_conttext_value:Board = {board:default_grid, SetGrid:(grid)=>{}, SetNum:(num)=>{},SetStatus:(stateus)=>{},SetFocusedId:(index)=>{}}
+const default_conttext_value:Board = {board:default_grid, SetGrid:(grid)=>{}, SetNum:(num)=>{},SetStatus:(stateus)=>{},SetFocusedId:(index)=>{}, SetLock:(locked)=>{}}
 
 
 export const BoardContext = createContext(default_conttext_value);
@@ -49,6 +52,12 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
     setBoard(ProcessingState(newBoard))
   }
 
+  const SetLock = (locked:boolean[]) => {
+    const newBoard:Grid = structuredClone(board)
+    newBoard.isLocked = structuredClone(locked)
+    setBoard(newBoard)
+  }
+
   const ProcessingState = (grid:Grid) => {
     return AddPossibleNumbers(AddState(grid))
   }
@@ -75,8 +84,8 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
       if(doubleds?.includes(item.id))newBoard.grid_state[item.id].state="doubled"
       else newBoard.grid_state[item.id].state=""
     })
-    if( !doubleds?.length && !newBoard.grid_state.filter((item)=>item.number===0).length )newBoard.isCompleted = 1
-    else newBoard.isCompleted = 0
+    if( !doubleds?.length && !newBoard.grid_state.filter((item)=>item.number===0).length )newBoard.isCompleted = true
+    else newBoard.isCompleted = false
     return newBoard
   }
 
@@ -103,7 +112,7 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
   }
 
   return (
-    <BoardContext.Provider value={ {board:board,SetGrid:SetGrid,SetNum:SetNum,SetStatus:SetStatus,SetFocusedId:SetFocusedId} }>
+    <BoardContext.Provider value={ {board:board,SetGrid:SetGrid,SetNum:SetNum,SetStatus:SetStatus,SetFocusedId:SetFocusedId,SetLock:SetLock} }>
       {children}
     </BoardContext.Provider>
   );

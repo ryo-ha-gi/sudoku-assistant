@@ -47,7 +47,7 @@ function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,se
 export default function Grid(){
 
     const {board,SetNum,SetFocusedId} = useContext(BoardContext)
-    const [isCelebrated,setIsCelebrated] = useState(0)
+    const [isCelebrated,setIsCelebrated] = useState(false)
 
     const confirmed_nums = board.grid_state.map((item)=>item.number)
     const box_status = board.grid_state.map((item)=>item.state)
@@ -56,10 +56,10 @@ export default function Grid(){
     const setConfirmed_nums = (num:number) => {
         SetNum(num)
     }
-    if(board.isCompleted==0&&isCelebrated)setIsCelebrated(0)
+    if(board.isCompleted==false&&isCelebrated)setIsCelebrated(false)
     if(board.isCompleted&&!isCelebrated){
         setTimeout(()=>{alert("Congraturations! おめでとう")},0.5)
-        setIsCelebrated(1)
+        setIsCelebrated(true)
     }
 
     const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
