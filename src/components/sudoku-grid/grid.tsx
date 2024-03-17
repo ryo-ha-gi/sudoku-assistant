@@ -7,27 +7,30 @@ function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,is
     function boxClickHandler(){
         setFocused_box(id)
     }
+
+    // frame
     const block_33_x_index = id%3
     const block_33_y_index = Math.floor(id/9) %3
     const outer_box_33block_border_css = (block_33_x_index===0?"border-l-2 ":(block_33_x_index===2?"border-r-2 ":" ")) + (block_33_y_index===0?"border-t-2 ":(block_33_y_index===2?"border-b-2 ":" "))
-    const outer_box_neutral_css = "hover:bg-white bg-opacity-90 border-slate-400 "
-    const outer_locked_css = " hover:bg-slate-400 bg-slate-600 bg-opacity-80 border-slate-400 "
-    const inner_box_not_focused_css = " border-gray-300"
-    const inner_box_neutral_css = " border-2 border-solid [aspect-ratio:1;] w-full h-full text-4xl font-bold flex items-center justify-center relative "
-    const inner_box_focused_css = " border-rose-500 bg-yellow-100 bg-opacity-100 z-2 "
-    const inner_box_doubled_css = status==="doubled"?" text-red-700 ":" "
-    const inner_same_num_css = " before:content-[''] before:absolute before:bg-yellow-200 before:dark:bg-yellow-400 before:bg-opacity-20 before:w-full before:h-full before:z-[-1] "
-    const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:dark:bg-slate-400 before:bg-opacity-20 before:w-full before:h-full before:z-[-1] "
-    const inner_same_col_css = (focused_id===id?" ":(focused_id%9===id%9?(inner_same_col_or_row + " before:border-x-2 "):" "))
-    const inner_same_row_css = (focused_id===id?" ":(Math.floor(focused_id/9)===Math.floor(id/9)?(inner_same_col_or_row + " before:border-y-2 "):" "))
+    const outer_box_neutral_css = "hover:bg-white hover:bg-opacity-90 border-slate-400 [aspect-ratio:1;] "
+    // locked
+    const locked_css = " hover:bg-slate-400 bg-slate-600 bg-opacity-80 border-slate-400 "
 
-    const inner_css = inner_box_neutral_css + (confirmed_num&&confirmed_num===focused_num?inner_same_num_css:inner_same_col_css + inner_same_row_css) + (id===focused_id?inner_box_focused_css:inner_box_not_focused_css) + inner_box_doubled_css
+    // focus
+    const same_col_or_row = " border-slate-300 bg-slate-200 dark:bg-slate-400 bg-opacity-20 w-full h-full "
+    const same_col_css = (focused_id===id?" ":(focused_id%9===id%9?(same_col_or_row + " border-x-2 "):" border-x-2 "))
+    const same_row_css = (focused_id===id?" ":(Math.floor(focused_id/9)===Math.floor(id/9)?(same_col_or_row + " border-y-2 "):" border-y-2 "))
+    const focused_css = focused_id===id? " border-2 border-rose-500 bg-yellow-100 bg-opacity-100 ":" "
+    // others
+    const same_num_css = focused_num===confirmed_num&&confirmed_num!==0? " bg-yellow-200 dark:bg-yellow-400 bg-opacity-70 w-full h-full ":""
+    const doubled_css = status==="doubled"?" text-red-700 ":""
+    const confirmed_css = confirmed_num?" font-bold text-xl flex justify-center items-center ":""
 
     const inner_grid = ({numbers}:{numbers:number[]}) => {
         return (
-            <div className="grid grid-cols-3 w-full">{
+            <div className="grid grid-cols-3 w-full h-full ">{
                 [1,2,3,4,5,6,7,8,9].map((val,ind)=>{
-                    return <div key={ind} className="text-gray-500 text-sm font-normal flex justify-center [aspect-ratio:1]">{numbers.includes(val)?val:""}</div>
+                    return <div key={ind} className="text-gray-500 text-sm font-normal flex justify-center w-full h-full [aspect-ratio:1]">{numbers.includes(val)?val:""}</div>
                 })
             }</div>
             
@@ -36,10 +39,17 @@ function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,is
     }
 
     return(
-        <div onClick={boxClickHandler} className={isLocked?outer_locked_css: outer_box_neutral_css+outer_box_33block_border_css}>
-            <div className={inner_css}>
-                {confirmed_num?confirmed_num:inner_grid({numbers:possible_numbers?possible_numbers:[]})}
+        <div onClick={boxClickHandler} className={outer_box_neutral_css+outer_box_33block_border_css}>
+            <div className="border-2 border-solid border-gray-300 w-full h-full">
+                <div className={"w-full h-full "+ (isLocked?locked_css:"")}>
+                    <div className={same_col_css+same_row_css+focused_css +" h-full w-full"}>
+                        <div className={same_num_css+doubled_css+confirmed_css + "h-full w-full"}>
+                            {confirmed_num?confirmed_num:inner_grid({numbers:possible_numbers?possible_numbers:[]})}
+                        </div>
+                    </div>
+                </div>
             </div>
+            
         </div>
     )
 }
@@ -100,7 +110,7 @@ export default function Grid(){
     }
     
     return (
-        <div tabIndex={0} onKeyDown={keyDownHandler} className="grid grid-cols-9 gap-0 w-[90%] [aspect-ratio:1;]">
+        <div tabIndex={0} onKeyDown={keyDownHandler} className="grid grid-cols-9 gap-0 w-[90%] ">
             {confirmed_nums.map((val,ind)=>{
                 return(
                     <Box 
