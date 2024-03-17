@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useContext } from "react";
 import { BoardContext } from "@/contexts/gridContext";
 
-function Box({confirmed_num,possible_numbers,id,focused_id,status,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;status:string;setFocused_box: (index: number) => void;}){
+function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;focused_num:number;status:string;setFocused_box: (index: number) => void;}){
     function boxClickHandler(){
         setFocused_box(id)
     }
@@ -15,11 +15,12 @@ function Box({confirmed_num,possible_numbers,id,focused_id,status,setFocused_box
     const inner_box_neutral_css = " border-2 border-solid [aspect-ratio:1;] w-full h-full text-4xl font-bold flex items-center justify-center relative "
     const inner_box_focused_css = " border-rose-500 bg-yellow-300"
     const inner_box_doubled_css = status==="doubled"?" text-red-700 ":" "
+    const inner_same_num_css = " before:content-[''] before:absolute before:bg-yellow-200 before:dark:bg-yellow-400 before:bg-opacity-0.2 before:w-full before:h-full before:z-[-1] "
     const inner_same_col_or_row = " before:content-[''] before:absolute before:border-slate-300 before:bg-slate-200 before:dark:bg-slate-400 before:bg-opacity-0.2 before:w-full before:h-full before:z-[-1] "
     const inner_same_col_css = (focused_id===id?" ":(focused_id%9===id%9?(inner_same_col_or_row + " before:border-x-2 "):" "))
     const inner_same_row_css = (focused_id===id?" ":(Math.floor(focused_id/9)===Math.floor(id/9)?(inner_same_col_or_row + " before:border-y-2 "):" "))
 
-    const inner_css = inner_box_neutral_css + inner_same_col_css + inner_same_row_css + (id===focused_id?inner_box_focused_css:inner_box_not_focused_css) + inner_box_doubled_css
+    const inner_css = inner_box_neutral_css + (confirmed_num&&confirmed_num===focused_num?inner_same_num_css:inner_same_col_css + inner_same_row_css) + (id===focused_id?inner_box_focused_css:inner_box_not_focused_css) + inner_box_doubled_css
 
     const inner_grid = ({numbers}:{numbers:number[]}) => {
         return (
@@ -106,6 +107,7 @@ export default function Grid(){
                         confirmed_num={Number(val)}
                         id={ind}
                         focused_id={focused_box}
+                        focused_num={focused_box!==-1?board.grid_state[focused_box].number:-1}
                         status={box_status[ind]}
                         possible_numbers={board.grid_state[ind].possible_numbers}
                         setFocused_box={SetFocusedId}
