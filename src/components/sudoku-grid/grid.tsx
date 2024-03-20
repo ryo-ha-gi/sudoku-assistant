@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useContext } from "react";
 import { BoardContext } from "@/contexts/gridContext";
 
-function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,isLocked,isUnique,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;focused_num:number;status:string;isLocked:boolean;isUnique:string;setFocused_box: (index: number) => void;}){
+function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,isLocked,isUnique,hasTwins,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;focused_num:number;status:string;isLocked:boolean;isUnique:string;hasTwins:string[];setFocused_box: (index: number) => void;}){
     function boxClickHandler(){
         setFocused_box(id)
     }
@@ -26,13 +26,19 @@ function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,is
     const doubled_css = status==="doubled"?" text-red-700 ":""
     const confirmed_css = confirmed_num?" font-bold text-xl flex justify-center items-center ":""
 
-    //inner_grid
+    function inner_grid_css(num:number){
+        const inner_grid_neutral_css = "text-sm font-normal flex justify-center w-full h-full [aspect-ratio:1] "
+        const inner_grid_unique_css = " text-red-400 "
+        const inner_grid_twins_css = " text-blue-400 "
+        const inner_grid_the_other_css = " text-gray-500 "
+        return inner_grid_neutral_css + (isUnique.slice(-1)===String(num)?inner_grid_unique_css:(hasTwins.filter((val)=>val.slice(-1)===String(num)).length?inner_grid_twins_css:(possible_numbers?.includes(num)?inner_grid_the_other_css:"")))
+    }
 
     const inner_grid = ({numbers}:{numbers:number[]}) => {
         return (
             <div className="grid grid-cols-3 w-full h-full ">{
                 [1,2,3,4,5,6,7,8,9].map((val,ind)=>{
-                    return <div key={ind} className={"text-sm font-normal flex justify-center w-full h-full [aspect-ratio:1]"+(Number(isUnique.slice(-1))===ind+1?" text-red-400 ":" text-gray-500 ")}>{numbers.includes(val)?val:""}</div>
+                    return <div key={ind} className={inner_grid_css(val)}>{numbers.includes(val)?val:""}</div>
                 })
             }</div>
             
@@ -125,6 +131,7 @@ export default function Grid(){
                         isLocked={board.isLocked[ind]}
                         possible_numbers={board.grid_state[ind].possible_numbers}
                         isUnique={board.grid_state[ind].isUnique}
+                        hasTwins={board.grid_state[ind].hasTwins}
                         setFocused_box={SetFocusedId}
                     />
                 )
