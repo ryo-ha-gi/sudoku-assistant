@@ -3,7 +3,7 @@ import { useState } from "react"
 import { useContext } from "react";
 import { BoardContext } from "@/contexts/gridContext";
 
-function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,isLocked,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;focused_num:number;status:string;isLocked:boolean;setFocused_box: (index: number) => void;}){
+function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,isLocked,isUnique,setFocused_box}:{confirmed_num:number;possible_numbers?:number[];id:number;focused_id:number;focused_num:number;status:string;isLocked:boolean;isUnique:string;setFocused_box: (index: number) => void;}){
     function boxClickHandler(){
         setFocused_box(id)
     }
@@ -26,11 +26,13 @@ function Box({confirmed_num,possible_numbers,id,focused_id,focused_num,status,is
     const doubled_css = status==="doubled"?" text-red-700 ":""
     const confirmed_css = confirmed_num?" font-bold text-xl flex justify-center items-center ":""
 
+    //inner_grid
+
     const inner_grid = ({numbers}:{numbers:number[]}) => {
         return (
             <div className="grid grid-cols-3 w-full h-full ">{
                 [1,2,3,4,5,6,7,8,9].map((val,ind)=>{
-                    return <div key={ind} className="text-gray-500 text-sm font-normal flex justify-center w-full h-full [aspect-ratio:1]">{numbers.includes(val)?val:""}</div>
+                    return <div key={ind} className={"text-sm font-normal flex justify-center w-full h-full [aspect-ratio:1]"+(Number(isUnique.slice(-1))===ind+1?" text-red-400 ":" text-gray-500 ")}>{numbers.includes(val)?val:""}</div>
                 })
             }</div>
             
@@ -122,6 +124,7 @@ export default function Grid(){
                         status={box_status[ind]}
                         isLocked={board.isLocked[ind]}
                         possible_numbers={board.grid_state[ind].possible_numbers}
+                        isUnique={board.grid_state[ind].isUnique}
                         setFocused_box={SetFocusedId}
                     />
                 )

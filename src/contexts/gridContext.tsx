@@ -2,14 +2,14 @@
 import React, { createContext, useState } from 'react';
 
 export const default_grid:Grid = {
-    grid_state:[...Array(9*9)].map((v,ind)=>{return{number:0,id:ind,state:"",possible_numbers:[0]}}),
+    grid_state:[...Array(9*9)].map((v,ind)=>{return{number:0,id:ind,state:"",possible_numbers:[0],isUnique:""}}),
     focused_id:-1,
     isCompleted:false,
     isLocked:[...Array(9*9)].map((v,ind)=>{return false})
 }
 
 export type Grid = {
-    grid_state: { number:number; id: number; state: string; possible_numbers:number[];}[];
+    grid_state: { number:number; id: number; state: string; possible_numbers:number[]; isUnique:string}[];
     focused_id: number;
     isCompleted:boolean;
     isLocked:boolean[];
@@ -59,7 +59,7 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
   }
 
   const ProcessingState = (grid:Grid) => {
-    return AddPossibleNumbers(AddState(grid))
+    return CheckUnique(AddPossibleNumbers(AddState(grid)))
   }
 
   const AddPossibleNumbers = (grid:Grid) => {
@@ -107,6 +107,32 @@ export const BoardProvider = ({ children }:{children:JSX.Element}) => {
         return Math.floor(i/27)==Math.floor(ind/27)&&Math.floor((i%9)/3)===Math.floor((ind%9)/3)
       })
       if(block.filter((val)=>val===num).length>1)return result.push(ind)
+    })
+    return result
+  }
+
+  function CheckUnique(board:Grid):Grid{
+    const result = structuredClone(board)
+    board.grid_state.map((item,ind)=>{
+      result.grid_state[ind].isUnique=""
+      
+      item.possible_numbers.map((num)=>{
+        if(num===0)return
+
+        //row
+        const row = board.grid_state.slice(Math.floor(ind/9)*9,(Math.floor(ind/9)+1)*9)
+        if(row.filter((val)=>val.possible_numbers.includes(num)).length===1)result.grid_state[ind].isUnique="row"+num.toString()
+
+        //col
+        const col = board.grid_state.filter((val,i)=> i%9===ind%9 )
+        if(col.filter((val)=>val.possible_numbers.includes(num)).length===1)result.grid_state[ind].isUnique="col"+num.toString()
+
+        //block
+        const block = board.grid_state.filter((val,i)=>{
+          return Math.floor(i/27)==Math.floor(ind/27)&&Math.floor((i%9)/3)===Math.floor((ind%9)/3)
+        })
+        if(block.filter((val)=>val.possible_numbers.includes(num)).length===1)result.grid_state[ind].isUnique="block"+num.toString()
+      })
     })
     return result
   }
